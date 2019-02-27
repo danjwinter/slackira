@@ -14,5 +14,4 @@ spec:
             env:
             - name: FREQUENCY_IN_MINUTES
               value: "{{ FREQUENCY_IN_MINUTES }}"
-            # imagePullPolicy: Never
           restartPolicy: OnFailure
