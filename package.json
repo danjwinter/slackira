@@ -4,7 +4,7 @@
   "description": "A slack to JIRA job",
   "main": "dist/main.js",
   "scripts": {
-    "test": "mocha test/",
+    "test": "tsc && mocha dist/**/*.spec.js",
     "start": "tsc && node dist/main.js"
   },
   "keywords": [
@@ -15,6 +15,11 @@
   "license": "ISC",
   "dependencies": {
     "@slack/client": "^4.10.0",
-    "jira-client": "^6.7.0" 
+    "@types/jira-client": "^6.4.2",
+    "@types/mocha": "^5.2.6",
+    "chai": "^4.2.0",
+    "jira-client": "^6.7.0",
+    "mocha": "^6.0.2",
+    "sinon": "^7.2.5"
   }
 }
