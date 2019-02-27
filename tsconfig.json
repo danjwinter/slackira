@@ -1,0 +1,32 @@
+
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "newLine": "LF",
+    "outDir": "./dist/",
+    "target": "es5",
+    "sourceMap": true,
+    "declaration": true,
+    "jsx": "preserve",
+    "lib": [
+      "es2017",
+      "es5",
+      "es2015",
+      "es2016.array.include",
+      "esnext.asynciterable",
+    ],
+    "strict": false,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "src/*.ts", "src/main.js"
+  ],
+  "exclude": [
+    ".git",
+    "node_modules"
+  ]
+}
