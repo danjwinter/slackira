@@ -36,7 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var WebClient = require('@slack/client').WebClient;
-// An access token (from your Slack app or custom integration - xoxp, or xoxb)
 var token = process.env.SLACK_TOKEN;
 var web = new WebClient(token);
 function listChannels() {
@@ -47,25 +46,24 @@ function listChannels() {
                 case 0: return [4 /*yield*/, web.conversations.list({
                         exclude_archived: true,
                         types: 'public_channel',
-                        // Only get first 100 items
                         limit: 100,
                     })];
                 case 1:
                     response = _a.sent();
-                    // `res.channels` is an array of channel info objects
                     return [2 /*return*/, response.channels];
             }
         });
     });
 }
 function getChannelHistory(id, minutesAgo) {
-    if (minutesAgo === void 0) { minutesAgo = 1; }
+    if (minutesAgo === void 0) { minutesAgo = null; }
     return __awaiter(this, void 0, void 0, function () {
         var result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, web.conversations.history({
                         channel: id,
+                        oldest: timeXMinutesAgo(minutesAgo || parseInt(process.env.FREQUENCY_IN_MINUTES) || 2)
                     })];
                 case 1:
                     result = _a.sent();

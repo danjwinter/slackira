@@ -12,10 +12,10 @@
   ENV SLACK_TOKEN ${SLACK_TOKEN}
 
   ARG JIRA_USERNAME=local
-  ENV JIRA_USERNAME ${JIRA_USERNAME}}
+  ENV JIRA_USERNAME ${JIRA_USERNAME}
 
   ARG JIRA_PASSWORD=local
-  ENV JIRA_PASSWORD ${JIRA_PASSWORD}}
+  ENV JIRA_PASSWORD ${JIRA_PASSWORD}
 
 # Create a user named $USER.  Run npm install as root before doing other commands
 	RUN useradd --user-group --create-home --shell /bin/false $USER &&\
@@ -26,6 +26,9 @@
 
 # Copy package.json and the gulpfile as root into the subdir where our app lies
 	COPY package.json tsconfig.json $HOME/$SUBDIR/
+
+# Copy src files into the subdir where our app lies
+	COPY src/ $HOME/$SUBDIR/src/
 
 # set the $USER as the owner of the $HOME directory.  Necessary after copying the files from the line above
 	RUN chown -R $USER:$USER $HOME/*

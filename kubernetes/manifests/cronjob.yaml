@@ -1,0 +1,18 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: slackira
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: slackira
+            image: slackira:6c8d315d695a7e1eb0389a805b7eef83fa72865b
+            env:
+            - name: FREQUENCY_IN_MINUTES
+              value: "1"
+            # imagePullPolicy: Never
+          restartPolicy: OnFailure

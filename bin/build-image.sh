@@ -2,8 +2,9 @@
 
 git_sha=$(git rev-parse HEAD)
 
+# Build image in the minikube environment
+eval $(minikube docker-env)
 
-# TODO: add env vars as build args 
 docker build \
   --build-arg JIRA_USERNAME=${JIRA_USERNAME} \
   --build-arg JIRA_PASSWORD=${JIRA_PASSWORD} \
