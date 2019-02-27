@@ -1,1 +1,1 @@
-export declare function addComment(issueId: any, comment: any): Promise<any>;
+export declare function addCommentsIfNotThere(issueId: any, newComment: any): Promise<void>;

@@ -3,9 +3,11 @@ import * as jira from './jira'
 
 async function main() {
   const messages = await slack.formattedSlackiraMessages()
-  messages.forEach((message) => {
-    jira.addComment(message.issue, message.text)
-  })
+  for (let i=0; i<messages.length;i++) {
+    const message = messages[i]
+    // await jira.addComment(message.issue, message.text)
+    await jira.addCommentsIfNotThere(message.issue, message.text)
+  }
 }
 
 main().then(() => {

@@ -17,7 +17,7 @@ async function listChannels() {
   return response.channels
 }
 
-async function getChannelHistory(id: string, minutesAgo: number =5): Promise<object> {
+async function getChannelHistory(id: string, minutesAgo: number = 1): Promise<object> {
   const result = await web.conversations.history({
     channel: id,
     // oldest: timeXMinutesAgo(minutesAgo)
@@ -56,7 +56,6 @@ function match(str: string) {
 export async function formattedSlackiraMessages() {
   const messages = await getSlackiraMessages()
   return messages.map((message) => {
-    console.log('match on tag was ', match(message.text)[0])
     const issue = match(message.text)[0].split(tagPrefix).pop()
     return {
       issue,

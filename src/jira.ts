@@ -1,6 +1,4 @@
-// import * as JiraApi from 'jira-client';
-var JiraApi = require('jira-client');
-var requestify = require('requestify'); 
+const JiraApi = require('jira-client');
 
 // Initialize
 const jira = new JiraApi({
@@ -12,7 +10,7 @@ const jira = new JiraApi({
   strictSSL: true
 });
 
-export async function addComment(issueId, comment) {
+async function addComment(issueId, comment) {
   console.log(`trying to add comment for issue ${issueId} with comment ${comment}`)
   try {
     return await jira.addComment(issueId, comment)
@@ -21,4 +19,30 @@ export async function addComment(issueId, comment) {
     console.log(e.message)
     console.log(e.options)
   }
+}
+
+export async function addCommentsIfNotThere(issueId, newComment) {
+  const comments = await getIssueComments(issueId)
+  if (comments.filter((issueComment) => issueComment.body === newComment).length === 0) {
+    await addComment(issueId, newComment)
+    console.log(`added comment ${newComment} to issue ${issueId}`)
+  } else {
+    console.log(`comment ${newComment} was already on issue ${issueId}`)
+  }
+}
+
+async function getIssueComments(issueId) {
+  const issue = await findIssue(issueId)
+  return issue.fields.comment.comments
+}
+
+async function findIssue(issueId) {
+  console.log(`trying to find issue ${issueId}`)
+  try {
+    return await jira.findIssue(issueId)
+  } catch (e) {
+    console.log('could not add comment with jira node')
+    console.log(e.message)
+    console.log(e.options)
+  } 
 }

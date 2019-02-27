@@ -35,9 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// import * as JiraApi from 'jira-client';
 var JiraApi = require('jira-client');
-var requestify = require('requestify');
 // Initialize
 var jira = new JiraApi({
     protocol: 'https',
@@ -70,57 +68,63 @@ function addComment(issueId, comment) {
         });
     });
 }
-exports.addComment = addComment;
-// export async function jiraMain() {
-//   console.log('starting jira')
-//   try {
-//     const result = await addComment('SSP-10', 'this was a total dumpster fire')
-//     console.log(result)
-//   } catch (e) {
-//     console.log('could not try it')
-//     console.log(e)
-//   }
-// }
-// jiraMain().then(() => {
-//   console.log('finished jira main')
-// })
-// import * as requestify from 'requestify'
-// const requestify = require('requestify')
-// function addComment(issueId, data) {
-//   return new Promise((resolve, reject) => {
-//     requestify.request(`https://slackira.atlassian.net/rest/api/3/${issueId}/`, {
-//       method: 'POST',
-//       body: data,
-//       headers: {
-//         'content-type': 'application/json'
-//       },
-//       auth: {
-//         username: process.env.JIRA_USERNAME,
-//         password: process.env.JIRA_PASSWORD
-//       },
-//       // dataType: options.config.datatype
-//     })
-//       .then(function (response) {
-//         console.log('after request')
-//         console.log('response', response.getBody())
-//         response.getBody();
-//         resolve(response.body)
-//       }).fail((e) => {
-//         console.log('failed the resuest')
-//         console.log(e)
-//       })
-//   })
-// };
-// var JiraClient = require('jira-connector');
-// var jira = new JiraClient( {
-//     host: 'slackira.atlassian.net',
-//     basic_auth: {
-//       username: process.env.JIRA_USERNAME,
-//       password: process.env.JIRA_PASSWORD
-//     }
-// });
-// const boardClient = new JiraClient.AgileBoardClient(JiraClient)
-// async function getAllBoards() {
-//   await boardClient.getAllBoards()
-// }
+function addCommentsIfNotThere(issueId, newComment) {
+    return __awaiter(this, void 0, void 0, function () {
+        var comments;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, getIssueComments(issueId)];
+                case 1:
+                    comments = _a.sent();
+                    if (!(comments.filter(function (issueComment) { return issueComment.body === newComment; }).length === 0)) return [3 /*break*/, 3];
+                    return [4 /*yield*/, addComment(issueId, newComment)];
+                case 2:
+                    _a.sent();
+                    console.log("added comment " + newComment + " to issue " + issueId);
+                    return [3 /*break*/, 4];
+                case 3:
+                    console.log("comment " + newComment + " was already on issue " + issueId);
+                    _a.label = 4;
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.addCommentsIfNotThere = addCommentsIfNotThere;
+function getIssueComments(issueId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var issue;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, findIssue(issueId)];
+                case 1:
+                    issue = _a.sent();
+                    return [2 /*return*/, issue.fields.comment.comments];
+            }
+        });
+    });
+}
+function findIssue(issueId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var e_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    console.log("trying to find issue " + issueId);
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, jira.findIssue(issueId)];
+                case 2: return [2 /*return*/, _a.sent()];
+                case 3:
+                    e_2 = _a.sent();
+                    console.log('could not add comment with jira node');
+                    console.log(e_2.message);
+                    console.log(e_2.options);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
 //# sourceMappingURL=jira.js.map

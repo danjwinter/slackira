@@ -39,16 +39,27 @@ var slack = require("./slack");
 var jira = require("./jira");
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var messages;
+        var messages, i, message;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, slack.formattedSlackiraMessages()];
                 case 1:
                     messages = _a.sent();
-                    messages.forEach(function (message) {
-                        jira.addComment(message.issue, message.text);
-                    });
-                    return [2 /*return*/];
+                    i = 0;
+                    _a.label = 2;
+                case 2:
+                    if (!(i < messages.length)) return [3 /*break*/, 5];
+                    message = messages[i];
+                    // await jira.addComment(message.issue, message.text)
+                    return [4 /*yield*/, jira.addCommentsIfNotThere(message.issue, message.text)];
+                case 3:
+                    // await jira.addComment(message.issue, message.text)
+                    _a.sent();
+                    _a.label = 4;
+                case 4:
+                    i++;
+                    return [3 /*break*/, 2];
+                case 5: return [2 /*return*/];
             }
         });
     });

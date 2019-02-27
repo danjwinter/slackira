@@ -2,10 +2,10 @@
   "name": "slackira",
   "version": "1.0.0",
   "description": "A slack to JIRA job",
-  "main": "main.js",
+  "main": "dist/main.js",
   "scripts": {
     "test": "mocha test/",
-    "runJob": "tsc && dist/main.js"
+    "start": "tsc && node dist/main.js"
   },
   "keywords": [
     "slack",
@@ -15,10 +15,10 @@
   "license": "ISC",
   "dependencies": {
     "@slack/client": "^4.10.0",
-    "chai": "^4.2.0",
     "jira-client": "^6.7.0",
-    "jira-connector": "^2.10.0",
-    "mocha": "^6.0.2",
-    "requestify": "^0.2.5"
+    "tsc": "^1.20150623.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.3333"
   }
 }

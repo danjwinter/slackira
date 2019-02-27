@@ -59,7 +59,7 @@ function listChannels() {
     });
 }
 function getChannelHistory(id, minutesAgo) {
-    if (minutesAgo === void 0) { minutesAgo = 5; }
+    if (minutesAgo === void 0) { minutesAgo = 1; }
     return __awaiter(this, void 0, void 0, function () {
         var result;
         return __generator(this, function (_a) {
@@ -125,7 +125,6 @@ function formattedSlackiraMessages() {
                 case 1:
                     messages = _a.sent();
                     return [2 /*return*/, messages.map(function (message) {
-                            console.log('match on tag was ', match(message.text)[0]);
                             var issue = match(message.text)[0].split(tagPrefix).pop();
                             return {
                                 issue: issue,
