@@ -1,6 +1,6 @@
 # Slackira
 
-Slackira is a simple app to support slack to JIRA ticket comments using tagging `#slackira-<JIRA_TICKET_ID>`. 
+Slackira is a simple app to support slack to JIRA ticket comments by tagging a slack message with `#slackira-<JIRA_TICKET_ID>`. There is also support to send a whole thread to the comment of a JIRA ticket by tagging the thread with `<#slackira@thread-<JIRA_TICKET_ID>`.
 
 
 ## Getting Started

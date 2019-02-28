@@ -36,13 +36,13 @@ async function trackedChannelIds() {
   }).map(channel => channel.id)
 }
 
-interface Message {
-  (user: string): string
-  (text: string): string
+interface RawMessage {
+  user: string
+  text: string
 }
 
 interface ChanMessageMap {
-  (chanId: string): Message[]
+  (chanId: string): RawMessage[]
 }
 
 async function pertinentChannelHistory(): Promise<ChanMessageMap> {
@@ -62,9 +62,9 @@ const messagePattern = /(#slackira-).{1,}/
 const threadPrefix = '#slackira@thread-'
 const threadPattern = /(#slackira@thread-).{1,}/
 
-async function formattedSlackiraMessages(messages, usersMap) {
-  const filteredMessages = filterMessages(messages, messagePattern)
-  const messagesWithAuthors = filteredMessages.map((message) => {
+async function formattedSlackiraMessages(messages: RawMessage[], usersMap: UsersMap) {
+  const filteredMessages = filterMessages(messages, messagePattern) as RawMessage[]
+  filteredMessages.forEach((message) => {
     const author = usersMap[message.user]
     message.text = author + ': ' + message.text
     return message
@@ -73,12 +73,15 @@ async function formattedSlackiraMessages(messages, usersMap) {
   return formatSlackiraMessages(filteredMessages, messagePattern, messagePrefix)
 }
 
+interface PreparedSlackMessage {
+  issue: string
+  text: string
+}
 
-export async function getAllSlackiraMessages() {
+export async function getAllSlackiraMessages(): Promise<PreparedSlackMessage[]> {
   const channelAndMessages = await pertinentChannelHistory()
   //ABOVE is a map chanId > message[]
 
-  // TODO: get user name to add  to message this just gets a user id
   const usersMap = await getAllUsers()
 
   const preparedSlackiraThreads = await formattedSlackiraThreads(channelAndMessages, usersMap)
@@ -87,9 +90,13 @@ export async function getAllSlackiraMessages() {
   return [].concat.apply([], [preparedSlackiraMessages, preparedSlackiraThreads])
 }
 
-async function getAllUsers() {
+type UsersMap = Map<UserId,UserName>
+type UserId = string
+type UserName = string
+
+async function getAllUsers(): Promise<UsersMap> {
   const usersList = (await web.users.list({})).members
-  const users = {}
+  const users = {} as UsersMap
   for (let i=0;i<usersList.length;i++) {
     const user = usersList[i]
     // user.name is nickname
@@ -98,7 +105,11 @@ async function getAllUsers() {
   return users
 }
 
-async function getAllMessagesOnThread(threadId, channelId, usersMap) {
+interface AggregatedThreadMessages {
+  text: string
+}
+
+async function getAllMessagesOnThread(threadId: string, channelId: string, usersMap: UsersMap): Promise<AggregatedThreadMessages> {
   const result = await web.conversations.replies({
     channel: channelId,
     ts: threadId
@@ -106,7 +117,8 @@ async function getAllMessagesOnThread(threadId, channelId, usersMap) {
   return extractThreadComments(result.messages, usersMap)
 }
 
-function extractThreadComments(messages, usersMap) {
+
+function extractThreadComments(messages: RawMessage[], usersMap: UsersMap): AggregatedThreadMessages {
   let fullComment = ""
   for( let i=0;i<messages.length;i++) {
     const message = messages[i]
@@ -116,7 +128,7 @@ function extractThreadComments(messages, usersMap) {
   return {text: fullComment}
 }
 
-async function formattedSlackiraThreads(chanMessageMap, usersMap) {
+async function formattedSlackiraThreads(chanMessageMap: ChanMessageMap, usersMap: UsersMap): Promise<PreparedSlackMessage[]> {
   const threadPromises = []
   for (const chan in chanMessageMap) {
     const messages = filterMessages(chanMessageMap[chan], threadPattern)
@@ -128,7 +140,7 @@ async function formattedSlackiraThreads(chanMessageMap, usersMap) {
   return formatSlackiraMessages(slackiraThreads, threadPattern, threadPrefix)
 }
 
-function formatSlackiraMessages(messages, pattern, prefix) {
+function formatSlackiraMessages(messages: RawMessage[], pattern: RegExp, prefix: string): PreparedSlackMessage[] {
   return messages.map((message) => {
     const issue = message.text.match(pattern)[0].split(prefix).pop()
     return {
@@ -138,7 +150,13 @@ function formatSlackiraMessages(messages, pattern, prefix) {
   })
 }
 
-function filterMessages(messages, pattern) {
+interface MessageForFilter {
+  text: string
+  thread_ts?: string
+  user?: string
+}
+
+function filterMessages(messages: MessageForFilter[], pattern: RegExp): MessageForFilter[] {
   return messages.filter((message) => {
     return message.text.match(pattern)
   })
