@@ -62,10 +62,11 @@ const messagePattern = /(#slackira-).{1,}/
 const threadPrefix = '#slackira@thread-'
 const threadPattern = /(#slackira@thread-).{1,}/
 
-async function formattedSlackiraMessages(messages, usersList) {
+async function formattedSlackiraMessages(messages, usersMap) {
   const filteredMessages = filterMessages(messages, messagePattern)
   const messagesWithAuthors = filteredMessages.map((message) => {
-    message.author = usersList[message.user]
+    const author = usersMap[message.user]
+    message.text = author + ': ' + message.text
     return message
   })
 
@@ -80,7 +81,7 @@ export async function getAllSlackiraMessages() {
   // TODO: get user name to add  to message this just gets a user id
   const usersMap = await getAllUsers()
 
-  const preparedSlackiraThreads = await formattedSlackiraThreads(channelAndMessages)
+  const preparedSlackiraThreads = await formattedSlackiraThreads(channelAndMessages, usersMap)
   const allMessages = [].concat.apply([], Object.values(channelAndMessages))
   const preparedSlackiraMessages = await formattedSlackiraMessages(allMessages, usersMap)
   return [].concat.apply([], [preparedSlackiraMessages, preparedSlackiraThreads])
@@ -97,29 +98,30 @@ async function getAllUsers() {
   return users
 }
 
-async function getAllMessagesOnThread(threadId, channelId) {
+async function getAllMessagesOnThread(threadId, channelId, usersMap) {
   const result = await web.conversations.replies({
     channel: channelId,
     ts: threadId
   })
-  return extractThreadComments(result.messages)
+  return extractThreadComments(result.messages, usersMap)
 }
 
-function extractThreadComments(messages) {
+function extractThreadComments(messages, usersMap) {
   let fullComment = ""
   for( let i=0;i<messages.length;i++) {
     const message = messages[i]
-    fullComment += message.text + '\n---\n'
+    const author = usersMap[message.user]
+    fullComment += author + ': ' + message.text + '\n---\n'
   }
   return {text: fullComment}
 }
 
-async function formattedSlackiraThreads(chanMessageMap) {
+async function formattedSlackiraThreads(chanMessageMap, usersMap) {
   const threadPromises = []
   for (const chan in chanMessageMap) {
     const messages = filterMessages(chanMessageMap[chan], threadPattern)
     for (let i=0;i<messages.length;i++) {
-      threadPromises.push(getAllMessagesOnThread(messages[i].thread_ts, chan))
+      threadPromises.push(getAllMessagesOnThread(messages[i].thread_ts, chan, usersMap))
     }
   }
   const slackiraThreads = await Promise.all(threadPromises)
@@ -131,7 +133,7 @@ function formatSlackiraMessages(messages, pattern, prefix) {
     const issue = message.text.match(pattern)[0].split(prefix).pop()
     return {
       issue,
-      text: message.author + ': ' + message.text
+      text: message.text
     }
   })
 }
