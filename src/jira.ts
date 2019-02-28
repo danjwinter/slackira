@@ -10,10 +10,10 @@ const jira = new JiraApi({
   strictSSL: true
 });
 
-async function addComment(issueId, comment) {
+async function addComment(issueId: string, comment: string): Promise<void> {
   console.log(`trying to add comment for issue ${issueId} with comment ${comment}`)
   try {
-    return await jira.addComment(issueId, comment)
+    await jira.addComment(issueId, comment)
   } catch (e) {
     console.log('could not add comment with jira node')
     console.log(e.message)
@@ -27,11 +27,11 @@ interface Message {
   text: string
 }
 
-export function buldAddCommentsIdempotent(messages: Message[] ): Promise<void>[] {
+export function bulkAddCommentsIdempotent(messages: Message[] ): Promise<void>[] {
   return messages.map((message) => { return addCommentsIdempotent(message.issue, message.text) })
 }
 
-export async function addCommentsIdempotent(issueId, newComment) {
+export async function addCommentsIdempotent(issueId: string, newComment: string): Promise<void> {
   const comments = await getIssueComments(issueId)
   if (comments.filter((issueComment) => issueComment.body === newComment).length === 0) {
     await addComment(issueId, newComment)
@@ -41,12 +41,24 @@ export async function addCommentsIdempotent(issueId, newComment) {
   }
 }
 
-async function getIssueComments(issueId) {
+interface IssueComments {
+  body: string
+}
+
+async function getIssueComments(issueId: string): Promise<IssueComments[]> {
   const issue = await findIssue(issueId)
   return issue.fields.comment.comments
 }
 
-async function findIssue(issueId) {
+interface Issue {
+  fields: {
+    comment: {
+      comments: IssueComments[]
+    }
+  }
+}
+
+async function findIssue(issueId: string): Promise<Issue> {
   console.log(`trying to find issue ${issueId}`)
   try {
     return await jira.findIssue(issueId)
