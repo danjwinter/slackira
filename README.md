@@ -13,6 +13,7 @@ Slackira depends on the following environment variables for credentials and conf
 - $SLACK_TOKEN # your slack access token
 - $JIRA_USERNAME # jira username to post comments
 - $JIRA_PASSWORD # jira password
+- $JIRA_HOST # host for your jira account
 - $SLACK_CHANNELS # comma-separated list of slack channels to monitor
 - $FREQUENCY_IN_MINUTES # how often you want the cronjob to run, also how far back it looks on each run.
 
