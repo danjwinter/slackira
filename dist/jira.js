@@ -68,7 +68,7 @@ function addComment(issueId, comment) {
         });
     });
 }
-function addCommentsIfNotThere(issueId, newComment) {
+function addCommentsIdempotent(issueId, newComment) {
     return __awaiter(this, void 0, void 0, function () {
         var comments;
         return __generator(this, function (_a) {
@@ -90,7 +90,7 @@ function addCommentsIfNotThere(issueId, newComment) {
         });
     });
 }
-exports.addCommentsIfNotThere = addCommentsIfNotThere;
+exports.addCommentsIdempotent = addCommentsIdempotent;
 function getIssueComments(issueId) {
     return __awaiter(this, void 0, void 0, function () {
         var issue;

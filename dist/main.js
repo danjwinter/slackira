@@ -37,12 +37,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var slack = require("./slack");
 var jira = require("./jira");
+require('sepia');
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var messages, i, message;
+        var messages, i, message, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, slack.formattedSlackiraMessages()];
+                case 0:
+                    _a.trys.push([0, 6, , 7]);
+                    return [4 /*yield*/, slack.formattedSlackiraMessages()];
                 case 1:
                     messages = _a.sent();
                     i = 0;
@@ -50,16 +53,20 @@ function main() {
                 case 2:
                     if (!(i < messages.length)) return [3 /*break*/, 5];
                     message = messages[i];
-                    // await jira.addComment(message.issue, message.text)
-                    return [4 /*yield*/, jira.addCommentsIfNotThere(message.issue, message.text)];
+                    return [4 /*yield*/, jira.addCommentsIdempotent(message.issue, message.text)];
                 case 3:
-                    // await jira.addComment(message.issue, message.text)
                     _a.sent();
                     _a.label = 4;
                 case 4:
                     i++;
                     return [3 /*break*/, 2];
-                case 5: return [2 /*return*/];
+                case 5: return [3 /*break*/, 7];
+                case 6:
+                    e_1 = _a.sent();
+                    console.log('There was an error getting messages from Slack or sending them to Jira');
+                    console.log(e_1);
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     });

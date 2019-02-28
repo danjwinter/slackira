@@ -21,7 +21,11 @@ async function addComment(issueId, comment) {
   }
 }
 
-export async function addCommentsIfNotThere(issueId, newComment) {
+export async function buldAddCommentsIdempotent(messages) {
+  return messages.map((message) => addCommentsIdempotent(message.issue, message.comment))
+}
+
+export async function addCommentsIdempotent(issueId, newComment) {
   const comments = await getIssueComments(issueId)
   if (comments.filter((issueComment) => issueComment.body === newComment).length === 0) {
     await addComment(issueId, newComment)

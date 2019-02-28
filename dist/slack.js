@@ -76,7 +76,8 @@ function timeXMinutesAgo(x) {
     var ms_per_minute = 60000;
     return new Date(new Date().getTime() - x * ms_per_minute).getTime() / 1000;
 }
-var channels = process.env.SLACK_CHANNELS.split(',') || ['slackjira'];
+// const channels = process.env.SLACK_CHANNELS.split(',') || ['slackjira']
+var channels = ['slackjira'];
 function trackedChannelIds() {
     return __awaiter(this, void 0, void 0, function () {
         var slackChannels;
