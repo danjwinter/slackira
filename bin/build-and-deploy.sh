@@ -7,10 +7,6 @@ git_sha=$(git rev-parse HEAD)
 eval $(minikube docker-env)
 
 docker build . -t slackira:$git_sha
-  # --build-arg JIRA_USERNAME=${JIRA_USERNAME} \
-  # --build-arg JIRA_PASSWORD=${JIRA_PASSWORD} \
-  # --build-arg SLACK_TOKEN=${SLACK_TOKEN} \
-  # --build-arg SLACK_CHANNELS=${SLACK_CHANNELS} \
 
 docker images
 
