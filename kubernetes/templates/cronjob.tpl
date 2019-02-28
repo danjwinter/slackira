@@ -16,6 +16,8 @@ spec:
               value: "{{ FREQUENCY_IN_MINUTES }}"
             - name: SLACK_CHANNELS
               value: "{{ SLACK_CHANNELS }}"
+            - name: ALL_CHANNELS
+              value: "{{ ALL_CHANNELS }}"
             - name: JIRA_HOST
               value: "{{ JIRA_HOST }}"
             - name: SLACK_TOKEN

@@ -1,7 +1,10 @@
 # Slackira
 
-Slackira is a simple app to support slack to JIRA ticket comments by tagging a slack message with `#slackira-<JIRA_TICKET_ID>`. There is also support to send a whole thread to the comment of a JIRA ticket by tagging the thread with `<#slackira@thread-<JIRA_TICKET_ID>`.
+![shakira-pengion](https://media.giphy.com/media/qeRmuv7wt8mfS/giphy.gif)
 
+Slackira is a simple app to support slack to JIRA ticket comments by tagging a slack message with `#slackira-<JIRA_TICKET_ID>`. There is also support to send a whole thread to the comment of a JIRA ticket by tagging the thread with `#slackira@thread-<JIRA_TICKET_ID>`. NOTE: When using the thread tag, the message also needs to be posted to the channel to be picked up by Slackira.
+
+Slackira, Slackira!
 
 ## Getting Started
 
@@ -14,7 +17,8 @@ Slackira depends on the following environment variables for credentials and conf
 - $JIRA_USERNAME # jira username to post comments
 - $JIRA_PASSWORD # jira password
 - $JIRA_HOST # host for your jira account
-- $SLACK_CHANNELS # comma-separated list of slack channels to monitor
+- $ALL_CHANNELS # set to 'true' if you want to monitor all channels, this takes precedence over $SLACK_CHANNELS. NOTE: This does not include private channels.
+- $SLACK_CHANNELS # comma-separated list of slack channels to monitor, this will be ignored if $ALL_CHANNELS is set to 'true'
 - $FREQUENCY_IN_MINUTES # how often you want the cronjob to run, also how far back it looks on each run.
 
 #### Local Minikube
@@ -26,7 +30,7 @@ Requires:
 #### Local Node
 
 Requires:
-- Node 11
+- Node 10
 - NPM
 
 ### Installing
@@ -52,12 +56,13 @@ TODO: add support to pass argument to npm start to configure how far back to que
 
 ## Running the tests
 
-TODO: Add tests
+TODO: Add tests, fixtures have been added with [sepia](https://github.com/linkedin/sepia), a VCR library for Node
 TODO: Add a CI tool - Jenkins, Circle, etc
 
 ## Deployment
 
-TODO: ADD cd script
+TODO: ADD cd script, for now it is best to edit the rendered kubernetes manifests from running locally using the `./bin/build-and-deploy.sh` script and push you locally built docker image to a repository.
+
 
 
 ## Contributing

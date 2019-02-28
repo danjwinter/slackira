@@ -30,15 +30,20 @@ function timeXMinutesAgo(x: number) {
 const channels = process.env.SLACK_CHANNELS && process.env.SLACK_CHANNELS.split(',')
 
 async function trackedChannelIds() {
-  const slackChannels = await listChannels()
-  return slackChannels.filter((channel) => {
+  let slackChannels = await listChannels()
+  if (process.env.ALL_CHANNELS !== 'true') {
+    slackChannels = slackChannels.filter((channel) => {
       return channels.includes(channel.name)
-  }).map(channel => channel.id)
+    })
+  }
+  console.log('monitoring channels: ', slackChannels.map((chan) => chan.name))
+  return slackChannels.map(channel => channel.id)
 }
 
 interface RawMessage {
   user: string
   text: string
+  thread_ts: string
 }
 
 interface ChanMessageMap {
@@ -80,10 +85,7 @@ interface PreparedSlackMessage {
 
 export async function getAllSlackiraMessages(): Promise<PreparedSlackMessage[]> {
   const channelAndMessages = await pertinentChannelHistory()
-  //ABOVE is a map chanId > message[]
-
   const usersMap = await getAllUsers()
-
   const preparedSlackiraThreads = await formattedSlackiraThreads(channelAndMessages, usersMap)
   const allMessages = [].concat.apply([], Object.values(channelAndMessages))
   const preparedSlackiraMessages = await formattedSlackiraMessages(allMessages, usersMap)
@@ -131,7 +133,7 @@ function extractThreadComments(messages: RawMessage[], usersMap: UsersMap): Aggr
 async function formattedSlackiraThreads(chanMessageMap: ChanMessageMap, usersMap: UsersMap): Promise<PreparedSlackMessage[]> {
   const threadPromises = []
   for (const chan in chanMessageMap) {
-    const messages = filterMessages(chanMessageMap[chan], threadPattern)
+    const messages = filterMessages<RawMessage>(chanMessageMap[chan], threadPattern)
     for (let i=0;i<messages.length;i++) {
       threadPromises.push(getAllMessagesOnThread(messages[i].thread_ts, chan, usersMap))
     }
@@ -152,13 +154,10 @@ function formatSlackiraMessages(messages: RawMessage[], pattern: RegExp, prefix:
 
 interface MessageForFilter {
   text: string
-  thread_ts?: string
-  user?: string
 }
 
-function filterMessages(messages: MessageForFilter[], pattern: RegExp): MessageForFilter[] {
+function filterMessages<T extends MessageForFilter >(messages: T[], pattern: RegExp): T[] {
   return messages.filter((message) => {
     return message.text.match(pattern)
   })
 }
-
