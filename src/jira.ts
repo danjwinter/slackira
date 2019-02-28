@@ -18,11 +18,17 @@ async function addComment(issueId, comment) {
     console.log('could not add comment with jira node')
     console.log(e.message)
     console.log(e.options)
+    throw e
   }
 }
 
-export async function buldAddCommentsIdempotent(messages) {
-  return messages.map((message) => addCommentsIdempotent(message.issue, message.comment))
+interface Message {
+  issue: string
+  text: string
+}
+
+export function buldAddCommentsIdempotent(messages: Message[] ): Promise<void>[] {
+  return messages.map((message) => { return addCommentsIdempotent(message.issue, message.text) })
 }
 
 export async function addCommentsIdempotent(issueId, newComment) {
@@ -48,5 +54,6 @@ async function findIssue(issueId) {
     console.log('could not add comment with jira node')
     console.log(e.message)
     console.log(e.options)
+    throw e
   } 
 }

@@ -36,6 +36,7 @@ Ensure you have the environment variables set from the prerequisites section.
 ```
 ./bin/build-and-deploy.sh [FREQUENCY_IN_MINUTES=1]
 ```
+NOTE: For FREQUENCY_IN_MINUTES, this script will first look for a value passed in at the command line, if none is there, it will look for an environment variable defined for FREQUENCY_IN_MINUTES and will finally default to every one minute if none is set.
 
 #### Local Node
 Note, this only runs the job once and defaults to looking back 2 minutes.
@@ -61,6 +62,14 @@ TODO: ADD cd script
 ## Contributing
 
 Fork it and add a pull request!
+
+## Next Steps
+
+### Express Server
+Add support for an express server for Slack to push messages to Slackira rather than Slackira pulling from Slack. This was not implemented originally because the service had to sit behind a firewall to post to JIRA but we are unable to poke a hole in the firewall for Slack to hit publicly. Development of this feature would likely include running ngrok locally to create a tunnel with a public IP addess for Slack to hit. 
+
+### Golang K8S CronJob Rest API Sidecar
+The golang k8s CronJob Rest API Sidecar would comprise of a service account with access to the k8s api-server cronjob information and would expose that as a rest api for the cronjob to determine the last success time and can self-heal by picking up from the last successful run. This would allow the job to recover from longer lived failures.
 
 ## Authors
 
