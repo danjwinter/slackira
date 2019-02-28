@@ -14,4 +14,21 @@ spec:
             env:
             - name: FREQUENCY_IN_MINUTES
               value: "{{ FREQUENCY_IN_MINUTES }}"
+            - name: SLACK_CHANNELS
+              value: "{{ SLACK_CHANNELS }}"
+            - name: SLACK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: slackira
+                  key: slack_token
+            - name: JIRA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: slackira
+                  key: jira_username
+            - name: JIRA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: slackira
+                  key: jira_password
           restartPolicy: OnFailure
