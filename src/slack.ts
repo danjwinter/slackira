@@ -27,7 +27,7 @@ function timeXMinutesAgo(x: number) {
   return new Date(new Date().getTime() - ((x+2) * ms_per_minute)).getTime()/1000
 }
 
-const channels = process.env.SLACK_CHANNELS && process.env.SLACK_CHANNELS.split(',') || ['slackjira']
+const channels = process.env.SLACK_CHANNELS && process.env.SLACK_CHANNELS.split(',')
 
 async function trackedChannelIds() {
   const slackChannels = await listChannels()

@@ -3,7 +3,7 @@ const JiraApi = require('jira-client');
 // Initialize
 const jira = new JiraApi({
   protocol: 'https',
-  host: 'slackira.atlassian.net',
+  host: process.env.JIRA_HOST,
   username: process.env.JIRA_USERNAME,
   password: process.env.JIRA_PASSWORD,
   apiVersion: '2',
